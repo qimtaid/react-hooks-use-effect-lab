@@ -1,12 +1,36 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from "react";
 
 function Question({ question, onAnswered }) {
   const [timeRemaining, setTimeRemaining] = useState(10);
+  let intervalId;
 
   // add useEffect code
 
+  useEffect(() => {
+    intervalId = setInterval(() => {
+      setTimeRemaining((prevTime) => prevTime - 1);
+    }, 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [timeRemaining]);
+
+  useEffect(() => {
+    if (timeRemaining === 0) {
+      onAnswered(false);
+    }
+  }, [timeRemaining, onAnswered]);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(intervalId);
+    };
+  }, []);
+
+
   function handleAnswer(isCorrect) {
-    setTimeRemaining(10);
+    clearInterval(intervalId);
     onAnswered(isCorrect);
   }
 
